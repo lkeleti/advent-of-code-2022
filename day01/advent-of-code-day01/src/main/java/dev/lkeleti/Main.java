@@ -1,7 +1,11 @@
 package dev.lkeleti;
 
+import java.nio.file.Path;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        Service service = new Service();
+        service.readInput(Path.of("/resources/input.txt"));
+        System.out.println(service.sumCalories.stream().max((o1, o2) -> o1.compareTo(o2)));
     }
 }
