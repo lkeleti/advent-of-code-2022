@@ -8,16 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Service {
-    public List<Long> sumCalories = new ArrayList<>();
+    private List<Long> sumCalories = new ArrayList<>();
 
     public void readInput(Path path) {
         try (BufferedReader br = Files.newBufferedReader(path)) {
             String line;
-            Long calories = Long.valueOf(0);
+            long calories = 0;
             while ((line = br.readLine()) != null) {
                 if (line.isBlank()) {
                     sumCalories.add(calories);
-                    calories = Long.valueOf(0);
+                    calories = 0;
                 }
                 else {
                     calories += Long.parseLong(line);
@@ -26,5 +26,9 @@ public class Service {
         } catch (IOException ioe) {
             throw new IllegalStateException("Cannot read file: " + path);
         }
+    }
+
+    public List<Long> getSumCalories() {
+        return sumCalories;
     }
 }
