@@ -35,7 +35,7 @@ public class Service {
         long score = 0;
         score += points.get(playerOne);
 
-        if (playerOne.equals(playerTwo)) {
+        if (points.get(playerOne) == points.get(playerTwo)) {
             score += 3;
         }
         else {
