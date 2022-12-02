@@ -39,7 +39,7 @@ public class Service {
             score += 3;
         }
         else {
-            if ((playerOne.equals("A") && playerTwo.equals("Z")) || (playerOne.equals("B") && playerTwo.equals("X")) || (playerOne.equals("C") && playerTwo.equals("Y"))) {
+            if ((playerOne.equals("X") && playerTwo.equals("C")) || (playerOne.equals("Y") && playerTwo.equals("A")) || (playerOne.equals("Z") && playerTwo.equals("B"))) {
                 score += 6;
             }
         }
@@ -48,11 +48,17 @@ public class Service {
 
     public Service() {
         points.put("A",1);
+        //A - rock
         points.put("B",2);
+        //B - paper
         points.put("C",3);
+        //C - scissor
         points.put("X",1);
+        //X - rock
         points.put("Y",2);
+        //Y - paper
         points.put("Z",3);
+        //Z - scissor
     }
 
     public int getTotal() {

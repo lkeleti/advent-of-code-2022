@@ -4,9 +4,9 @@ public class State {
     private String mySelection;
     private String enemySelection;
 
-    public State(String mySelection, String enemySelection) {
-        this.mySelection = mySelection;
+    public State(String enemySelection, String mySelection) {
         this.enemySelection = enemySelection;
+        this.mySelection = mySelection;
     }
 
     public String getMySelection() {
