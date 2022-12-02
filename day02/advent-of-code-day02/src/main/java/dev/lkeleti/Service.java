@@ -4,14 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 
 public class Service {
     private List<State> states = new ArrayList<>();
-    private final Dictionary<String,Integer> points = new Hashtable<>();
+    private final Map<String,Integer> points = new HashMap<>();
+    private final Map<String,String> lose = new HashMap<>();
+    private final Map<String,String> win = new HashMap<>();
 
     public void readInput(Path path) {
         try (BufferedReader br = Files.newBufferedReader(path)) {
@@ -46,6 +45,36 @@ public class Service {
         return score;
     }
 
+
+    public int getTotal(String part) {
+        int total = 0;
+        for (State state: states) {
+            if (part.equals("p1")) {
+                total += roundScore(state.getMySelection(), state.getEnemySelection());
+            }
+            else {
+                total += finalScore(state.getMySelection(), state.getEnemySelection());
+            }
+        }
+        return total;
+    }
+
+    private int finalScore(String mySelection, String enemySelection) {
+        int score = 0;
+        if (mySelection.equals("X")) {
+            score += points.get(lose.get(enemySelection));
+        }
+        else if (mySelection.equals("Y")) {
+            score += points.get(enemySelection);
+            score += 3;
+        }
+        else {
+            score += points.get(win.get(enemySelection));
+            score += 6;
+        }
+        return score;
+    }
+
     public Service() {
         points.put("A",1);
         //A - rock
@@ -59,13 +88,13 @@ public class Service {
         //Y - paper
         points.put("Z",3);
         //Z - scissor
-    }
 
-    public int getTotal() {
-        int total = 0;
-        for (State state: states) {
-            total += roundScore(state.getMySelection(), state.getEnemySelection());
-        }
-        return total;
+        lose.put("A","C");
+        lose.put("B","A");
+        lose.put("C","B");
+
+        win.put("A","B");
+        win.put("B","C");
+        win.put("C","A");
     }
 }
