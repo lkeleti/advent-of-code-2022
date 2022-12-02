@@ -34,13 +34,12 @@ public class Service {
     private long roundScore(String playerOne, String playerTwo) {
         long score = 0;
         score += points.get(playerOne);
-        score += points.get(playerTwo);
 
         if (playerOne.equals(playerTwo)) {
             score += 3;
         }
         else {
-            if ((playerOne.equals("A") && playerTwo.equals("C")) || (playerOne.equals("B") && playerTwo.equals("A")) || (playerOne.equals("C") && playerTwo.equals("B"))) {
+            if ((playerOne.equals("A") && playerTwo.equals("Z")) || (playerOne.equals("B") && playerTwo.equals("X")) || (playerOne.equals("C") && playerTwo.equals("Y"))) {
                 score += 6;
             }
         }
