@@ -53,15 +53,8 @@ public class Service {
     }
 
     private long calculatePriorityOfThree(String first, String second, String third) {
-        List<Character> same = new ArrayList<>();
         for (char c: first.toCharArray()) {
-            if (second.contains(String.valueOf(c)))  {
-                same.add(c);
-            }
-        }
-
-        for (char c: same) {
-            if (third.contains(String.valueOf(c)))  {
+            if (second.contains(String.valueOf(c)) && third.contains(String.valueOf(c)))  {
                 return c >96?c-96:c-38;
             }
         }
