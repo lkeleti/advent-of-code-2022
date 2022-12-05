@@ -18,15 +18,12 @@ public class Service {
         commandList = new ArrayList<>();
         crates =  new TreeMap<>();
         firstLines = new ArrayList<>();
-        commandList.clear();
-        crates.clear();
-        firstLines.clear();
     }
     public void readInput(Path path) {
         init();
         try (BufferedReader br = Files.newBufferedReader(path)) {
             String line;
-            Boolean isCommands = false;
+            boolean isCommands = false;
             while ((line = br.readLine()) != null) {
                 if (isCommands) {
                     commandFromLine(line);
@@ -38,7 +35,6 @@ public class Service {
                 else {
                     firstLines.add(line);
                 }
-
             }
         } catch (IOException ioe) {
             throw new IllegalStateException("Cannot read file: " + path);
@@ -46,73 +42,17 @@ public class Service {
     }
 
     private void createCrates() {
-//        for (int i =firstLines.size()-2; i>=0;i--) {
-//        }
-        crates.put(1,new ArrayList<>());
-        crates.get(1).add("W");
-        crates.get(1).add("R");
-        crates.get(1).add("F");
-        crates.put(2,new ArrayList<>());
-        crates.get(2).add("T");
-        crates.get(2).add("H");
-        crates.get(2).add("M");
-        crates.get(2).add("C");
-        crates.get(2).add("D");
-        crates.get(2).add("V");
-        crates.get(2).add("W");
-        crates.get(2).add("P");
-        crates.put(3,new ArrayList<>());
-        crates.get(3).add("P");
-        crates.get(3).add("M");
-        crates.get(3).add("Z");
-        crates.get(3).add("N");
-        crates.get(3).add("L");
-        crates.put(4,new ArrayList<>());
-        crates.get(4).add("J");
-        crates.get(4).add("C");
-        crates.get(4).add("H");
-        crates.get(4).add("R");
-        crates.put(5,new ArrayList<>());
-        crates.get(5).add("C");
-        crates.get(5).add("P");
-        crates.get(5).add("G");
-        crates.get(5).add("H");
-        crates.get(5).add("Q");
-        crates.get(5).add("T");
-        crates.get(5).add("B");
-        crates.put(6,new ArrayList<>());
-        crates.get(6).add("G");
-        crates.get(6).add("C");
-        crates.get(6).add("W");
-        crates.get(6).add("L");
-        crates.get(6).add("F");
-        crates.get(6).add("Z");
-        crates.put(7,new ArrayList<>());
-        crates.get(7).add("W");
-        crates.get(7).add("V");
-        crates.get(7).add("L");
-        crates.get(7).add("Q");
-        crates.get(7).add("Z");
-        crates.get(7).add("J");
-        crates.get(7).add("G");
-        crates.get(7).add("C");
-        crates.put(8,new ArrayList<>());
-        crates.get(8).add("P");
-        crates.get(8).add("N");
-        crates.get(8).add("R");
-        crates.get(8).add("F");
-        crates.get(8).add("W");
-        crates.get(8).add("T");
-        crates.get(8).add("V");
-        crates.get(8).add("C");
-        crates.put(9,new ArrayList<>());
-        crates.get(9).add("J");
-        crates.get(9).add("W");
-        crates.get(9).add("H");
-        crates.get(9).add("G");
-        crates.get(9).add("R");
-        crates.get(9).add("S");
-        crates.get(9).add("V");
+        for (int i =firstLines.size()-2; i>=0;i--) {
+            int lengthDefaultRow = (firstLines.get(i).length()-2)/4;
+            for (int j = 0; j <= lengthDefaultRow;j++){
+                crates.computeIfAbsent(j+1,k-> new ArrayList<>());
+                int startIndex = (j * 4) + 1;
+                String defaultLetter = firstLines.get(i).substring(startIndex,startIndex+1);
+                if (!defaultLetter.isBlank()) {
+                    crates.get(j+1).add(defaultLetter);
+                }
+            }
+        }
     }
 
     private void commandFromLine(String line) {
@@ -161,11 +101,10 @@ public class Service {
         else {
             moveCrates9001();
         }
-        String result = "";
-        for (int key: crates.keySet()) {
-            List<String> letters = crates.get(key);
-            result += letters.get(letters.size()-1);
+        StringBuilder result = new StringBuilder();
+        for (Map.Entry<Integer,List<String>> letters:crates.entrySet()) {
+            result.append(letters.getValue().get(letters.getValue().size() - 1));
         }
-        return result;
+        return result.toString();
     }
 }
