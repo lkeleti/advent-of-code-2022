@@ -19,19 +19,10 @@ public class Service {
         }
     }
 
-    public int checkSignal() {
-        for (int i = 0; i < receivedData.length()-4; i++) {
-            if (isDifferent(receivedData.substring(i,i+4))) {
-                return i + 4;
-            }
-        }
-        return -1;
-    }
-
-    public int checkMessage() {
-        for (int i = 0; i < receivedData.length()-14; i++) {
-            if (isDifferent(receivedData.substring(i,i+14))) {
-                return i + 14;
+    public int checkSignal(int codeLength) {
+        for (int i = 0; i < receivedData.length()-codeLength; i++) {
+            if (isDifferent(receivedData.substring(i, i+codeLength))) {
+                return i + codeLength;
             }
         }
         return -1;
