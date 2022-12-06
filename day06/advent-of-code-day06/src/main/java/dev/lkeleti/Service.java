@@ -18,4 +18,33 @@ public class Service {
             throw new IllegalStateException("Cannot read file: " + path);
         }
     }
+
+    public int checkSignal() {
+        for (int i = 0; i < receivedData.length()-4; i++) {
+            if (isDifferent(receivedData.substring(i,i+4))) {
+                return i + 4;
+            }
+        }
+        return -1;
+    }
+
+    public int checkMessage() {
+        for (int i = 0; i < receivedData.length()-14; i++) {
+            if (isDifferent(receivedData.substring(i,i+14))) {
+                return i + 14;
+            }
+        }
+        return -1;
+    }
+
+    private boolean isDifferent(String signal) {
+        for (int i = 0; i < signal.length()-1; i++ ) {
+            for (int j = i + 1; j < signal.length(); j++) {
+                if (signal.toCharArray()[i] == signal.toCharArray()[j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

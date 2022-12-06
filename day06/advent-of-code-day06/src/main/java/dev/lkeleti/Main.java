@@ -7,6 +7,8 @@ public class Main {
         Service service = new Service();
         service.readInput(Path.of("src/main/resources/input.txt"));
         System.out.println("Answer of part 1:");
+        System.out.println(service.checkSignal());
         System.out.println("Answer of part 2:");
+        System.out.println(service.checkMessage());
     }
 }
