@@ -27,20 +27,21 @@ public class Service {
         OwnDirectory defaultDir = rootDir;
         char mode = '0';
         for (int i = 0; i < inputData.size(); i++) {
-
-            if (inputData.get(i).contains("$ cd \\")) {
+            if (inputData.get(i).contains("$ cd /")) {
                 defaultDir = rootDir;
                 mode = 'r';
             } else if (inputData.get(i).contains("$ cd ..")) {
                 defaultDir = defaultDir.getParent();
                 mode = 'c';
             } else if (inputData.get(i).contains("$ cd ")) {
-                //change directory
+                String newDirName = inputData.get(i).split(" ")[2];
+                for (OwnDirectory subDir: defaultDir.getSubdirectories()){
+                    if (subDir.getName().equals(newDirName)) {
+                        defaultDir = subDir;
+                        break;
+                    }
+                }
                 mode = 'c';
-            }
-
-            if (inputData.get(i).contains("$ ls")) {
-                mode = 'l';
             }
 
             if (mode == 'l') {
@@ -60,6 +61,9 @@ public class Service {
                 }
             }
 
+            if (inputData.get(i).contains("$ ls")) {
+                mode = 'l';
+            }
         }
     }
 
