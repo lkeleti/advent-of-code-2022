@@ -67,4 +67,42 @@ public class Service {
         }
     }
 
+    private long countRecursive(OwnDirectory defaultDir) {
+        long total = 0;
+        if (defaultDir.getSize() <= 100000) {
+            total += defaultDir.getSize();
+        }
+        if (!defaultDir.getSubdirectories().isEmpty()) {
+            for (OwnDirectory subDir: defaultDir.getSubdirectories()) {
+                total += countRecursive(subDir);
+            }
+        }
+        return total;
+    }
+    public long countTotal() {
+        return countRecursive(rootDir);
+    }
+
+    public long findSmallestDeletable() {
+        long freeSpace = 70_000_000 - rootDir.getSize();
+        long neededSpace = 30_000_000 - freeSpace;
+        return findPerfectDir(rootDir,neededSpace, Long.MAX_VALUE);
+    }
+
+    private long findPerfectDir(OwnDirectory defaultDir, long neededSpace, long smallest) {
+        if (!defaultDir.getSubdirectories().isEmpty()) {
+            for (OwnDirectory subDir: defaultDir.getSubdirectories()) {
+                long subDirSize = subDir.getSize();
+                if (subDirSize >= neededSpace && subDirSize < smallest) {
+                    smallest = subDirSize;
+                }
+                smallest = findPerfectDir(subDir,neededSpace,smallest);
+            }
+        }
+        return smallest;
+    }
+
+    public OwnDirectory getRootDir() {
+        return rootDir;
+    }
 }

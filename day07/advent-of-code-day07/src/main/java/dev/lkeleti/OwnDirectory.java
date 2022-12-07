@@ -36,9 +36,17 @@ public class OwnDirectory {
         return ownFiles;
     }
 
+    private void updateParentDirectorySize(OwnDirectory directory, long size) {
+        if (directory.parent != null) {
+            directory.parent.size += size;
+            updateParentDirectorySize(directory.parent, size);
+        }
+
+    }
     public void addFile(OwnFile file) {
         ownFiles.add(file);
         size += file.getSize();
+        updateParentDirectorySize(this, file.getSize());
     }
 
     public void addDirectory(OwnDirectory directory) {
