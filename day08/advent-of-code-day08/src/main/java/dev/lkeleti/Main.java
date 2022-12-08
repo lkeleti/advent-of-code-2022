@@ -10,6 +10,5 @@ public class Main {
         System.out.println(service.countVisible());
         System.out.println("Answer of part 2:");
         System.out.println(service.maxScore());
-        //460992 low
     }
 }

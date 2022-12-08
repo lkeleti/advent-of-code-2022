@@ -45,63 +45,63 @@ public class Service {
     }
 
     private boolean isVisible(int column, int row) {
-        if (checkLeft(column, row) == 0) {
+        if (checkLeft(column, row)) {
             return true;
         }
 
-        if (checkRight(column, row) == 0) {
+        if (checkRight(column, row)) {
             return true;
         }
 
-        if (checkTop(column, row) == 0) {
+        if (checkTop(column, row)) {
             return true;
         }
 
-        if (checkBottom(column, row) == 0) {
+        if (checkBottom(column, row)) {
             return true;
         }
 
         return false;
     }
 
-    private int checkLeft(int column, int row) {
+    private boolean checkLeft(int column, int row) {
         int height = treeTable.get(column).get(row);
         for (int i = row-1; i >=0; i-- ) {
             if (treeTable.get(column).get(i) >= height) {
-                return row-i;
+                return false;
             }
         }
-        return 0;
+        return true;
     }
 
-    private int checkRight(int column, int row) {
+    private boolean checkRight(int column, int row) {
         int height = treeTable.get(column).get(row);
         for (int i = row+1; i <treeTable.get(column).size(); i++ ) {
             if (treeTable.get(column).get(i) >= height) {
-                return i - row;
+                return false;
             }
         }
-        return 0;
+        return true;
     }
 
-    private int checkTop(int column, int row) {
+    private boolean checkTop(int column, int row) {
         int height = treeTable.get(column).get(row);
         for (int i = column-1; i >=0; i-- ) {
             if (treeTable.get(i).get(row) >= height) {
-                return column - i;
+                return false;
             }
         }
-        return 0;
+        return true;
     }
 
-    private int checkBottom(int column, int row) {
+    private boolean checkBottom(int column, int row) {
         int height = treeTable.get(column).get(row);
         for (int i = column+1; i <treeTable.size(); i++ ) {
             if (treeTable.get(i).get(row) >= height) {
-                return i - column;
+                return false;
             }
         }
-        return 0;
+        return true;
     }
 
     public long maxScore() {
@@ -129,7 +129,7 @@ public class Service {
                 return row-i;
             }
         }
-        return row - 1;
+        return row;
     }
 
     private int checkRightScore(int column, int row) {
@@ -139,7 +139,7 @@ public class Service {
                 return i - row;
             }
         }
-        return treeTable.get(column).size() - row;
+        return treeTable.get(column).size() - row-1;
     }
 
     private int checkTopScore(int column, int row) {
@@ -149,7 +149,7 @@ public class Service {
                 return column - i;
             }
         }
-        return column - 1;
+        return column;
     }
 
     private int checkBottomScore(int column, int row) {
@@ -159,7 +159,7 @@ public class Service {
                 return i - column;
             }
         }
-        return treeTable.size() - column;
+        return treeTable.size() - column-1;
     }
 
 }
