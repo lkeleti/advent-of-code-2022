@@ -45,19 +45,63 @@ public class Service {
     }
 
     private boolean isVisible(int column, int row) {
-        int height = treeTable.get(column).get(row);
-        for (int i = 0; i < treeTable.size(); i++) {
-            if (i != column && treeTable.get(i).get(row) < height) {
-                return true;
-            }
+        if (checkLeft(column, row)) {
+            return true;
         }
 
-        for (int j = 0; j < treeTable.get(0).size(); j++) {
-            if (j != row && treeTable.get(column).get(j) < height) {
-                return true;
+        if (checkRight(column, row)) {
+            return true;
+        }
+
+        if (checkTop(column, row)) {
+            return true;
+        }
+
+        if (checkBottom(column, row)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean checkLeft(int column, int row) {
+        int height = treeTable.get(column).get(row);
+        for (int i = row-1; i >=0; i-- ) {
+            if (treeTable.get(column).get(i) >= height) {
+                return false;
             }
         }
-        return false;
+        return true;
+    }
+
+    private boolean checkRight(int column, int row) {
+        int height = treeTable.get(column).get(row);
+        for (int i = row+1; i <treeTable.get(column).size(); i++ ) {
+            if (treeTable.get(column).get(i) >= height) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkTop(int column, int row) {
+        int height = treeTable.get(column).get(row);
+        for (int i = column-1; i >=0; i-- ) {
+            if (treeTable.get(i).get(row) >= height) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkBottom(int column, int row) {
+        int height = treeTable.get(column).get(row);
+        for (int i = column+1; i <treeTable.size(); i++ ) {
+            if (treeTable.get(i).get(row) >= height) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
