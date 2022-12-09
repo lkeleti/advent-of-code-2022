@@ -37,8 +37,10 @@ public class Service {
         for (Command command: commandList) {
             move(command);
         }
-        System.out.println(defaultHeadPosition.getxPos());
-        System.out.println(defaultHeadPosition.getyPos());
+
+        System.out.printf("Head final pos: %d;%d %n", defaultHeadPosition.getxPos(),defaultHeadPosition.getyPos());
+        System.out.printf("Tail final pos: %d;%d %n", defaultTailPosition.getxPos(),defaultTailPosition.getyPos());
+
         System.out.println(tailPositions.size());
     }
 
@@ -68,19 +70,19 @@ public class Service {
         int differentX = defaultHeadPosition.getxPos() - defaultTailPosition.getxPos();
         int differentY = defaultHeadPosition.getyPos() - defaultTailPosition.getyPos();
 
-        if (differentX == 0 && differentY == 0) {
-            tailPositions.add(defaultTailPosition);
+        if (Math.abs(differentX) < 2 && Math.abs(differentY) < 2) {
+            tailPositions.add( new Position(defaultTailPosition.getxPos(), defaultTailPosition.getyPos()));
             return;
         }
         if (differentX == 0) {
             // same col
             if (Math.abs(differentY) > 1) {
-                defaultTailPosition.moveX(differentX);
+                defaultTailPosition.moveY(differentY/2);
             }
         } else if (differentY == 0) {
             // same row  ...T. H...
             if (Math.abs(differentX) > 1) {
-                defaultTailPosition.moveY(differentY);
+                defaultTailPosition.moveX(differentX/2);
             }
         }
         else {
@@ -94,6 +96,6 @@ public class Service {
                 defaultTailPosition.moveY(differentY/2);
             }
         }
-        tailPositions.add(defaultTailPosition);
+        tailPositions.add( new Position(defaultTailPosition.getxPos(), defaultTailPosition.getyPos()));
     }
 }
