@@ -11,9 +11,10 @@ import java.util.Set;
 
 public class Service {
 
-    private List<Command> commandList = new ArrayList<>();
-    private Position defaultPosition = new Position(0,0);
-    private Set<Position> tailPositions = new HashSet<>();
+    private final List<Command> commandList = new ArrayList<>();
+    private final Position defaultHeadPosition = new Position(0,0);
+    private final Position defaultTailPosition = new Position(0,0);
+    private final Set<Position> tailPositions = new HashSet<>();
     public void readInput(Path path) {
         try (BufferedReader br = Files.newBufferedReader(path)) {
             String line;
@@ -36,26 +37,63 @@ public class Service {
         for (Command command: commandList) {
             move(command);
         }
-        System.out.println(defaultPosition.getxPos());
-        System.out.println(defaultPosition.getyPos());
+        System.out.println(defaultHeadPosition.getxPos());
+        System.out.println(defaultHeadPosition.getyPos());
+        System.out.println(tailPositions.size());
     }
 
     private void move(Command command) {
-        switch (command.getDirection()) {
-            case 'U':
-                defaultPosition.moveY(command.getDistance());
-                break;
-            case 'D':
-                defaultPosition.moveY(-command.getDistance());
-                break;
-            case 'L':
-                defaultPosition.moveX(-command.getDistance());
-                break;
-            case 'R':
-                defaultPosition.moveX(command.getDistance());
-                break;
-            default:
-                break;
+        for (int i = 0; i < command.getDistance(); i++) {
+            switch (command.getDirection()) {
+                case 'U':
+                    defaultHeadPosition.moveY(1);
+                    break;
+                case 'D':
+                    defaultHeadPosition.moveY(-1);
+                    break;
+                case 'L':
+                    defaultHeadPosition.moveX(-1);
+                    break;
+                case 'R':
+                    defaultHeadPosition.moveX(1);
+                    break;
+                default:
+                    break;
+            }
+            moveTail();
         }
+    }
+
+    private void moveTail() {
+        int differentX = defaultHeadPosition.getxPos() - defaultTailPosition.getxPos();
+        int differentY = defaultHeadPosition.getyPos() - defaultTailPosition.getyPos();
+
+        if (differentX == 0 && differentY == 0) {
+            tailPositions.add(defaultTailPosition);
+            return;
+        }
+        if (differentX == 0) {
+            // same col
+            if (Math.abs(differentY) > 1) {
+                defaultTailPosition.moveX(differentX);
+            }
+        } else if (differentY == 0) {
+            // same row  ...T. H...
+            if (Math.abs(differentX) > 1) {
+                defaultTailPosition.moveY(differentY);
+            }
+        }
+        else {
+            // different col and row
+            if (Math.abs(differentY) == 1) {
+                defaultTailPosition.setyPos(defaultHeadPosition.getyPos());
+                defaultTailPosition.moveX(differentX/2);
+            }
+            if (Math.abs(differentX) == 1) {
+                defaultTailPosition.setxPos(defaultHeadPosition.getxPos());
+                defaultTailPosition.moveY(differentY/2);
+            }
+        }
+        tailPositions.add(defaultTailPosition);
     }
 }
