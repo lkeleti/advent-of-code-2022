@@ -4,17 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Service {
 
     private final List<Command> commandList = new ArrayList<>();
-    private final Position defaultHeadPosition = new Position(0,0);
-    private final Position defaultTailPosition = new Position(0,0);
-    private final Set<Position> tailPositions = new HashSet<>();
+    private final List<Position> snake = new ArrayList<>();
+    private Position defaultHeadPosition;
+    private Position defaultTailPosition;
+    private final Set<Position> tailPositions = new TreeSet<>(Comparator.comparing(Position::toString));
     public void readInput(Path path) {
         try (BufferedReader br = Files.newBufferedReader(path)) {
             String line;
@@ -33,19 +31,22 @@ public class Service {
         );
     }
 
-    public void processMoves() {
+    public int processMoves(int num) {
+        snake.clear();
+        for (int i = 0; i < num; i++) {
+            snake.add(new Position(0,0));
+        }
+        tailPositions.clear();
+
         for (Command command: commandList) {
             move(command);
         }
-
-        System.out.printf("Head final pos: %d;%d %n", defaultHeadPosition.getxPos(),defaultHeadPosition.getyPos());
-        System.out.printf("Tail final pos: %d;%d %n", defaultTailPosition.getxPos(),defaultTailPosition.getyPos());
-
-        System.out.println(tailPositions.size());
+        return tailPositions.size();
     }
 
     private void move(Command command) {
         for (int i = 0; i < command.getDistance(); i++) {
+            defaultHeadPosition = snake.get(0);
             switch (command.getDirection()) {
                 case 'U':
                     defaultHeadPosition.moveY(1);
@@ -62,7 +63,14 @@ public class Service {
                 default:
                     break;
             }
-            moveTail();
+            for (int j = 0; j < snake.size()-1; j++) {
+                defaultHeadPosition = snake.get(j);
+                defaultTailPosition = snake.get(j+1);
+                moveTail();
+                if (j+1 == snake.size()-1) {
+                    tailPositions.add(new Position(defaultTailPosition.getxPos(), defaultTailPosition.getyPos()));
+                }
+            }
         }
     }
 
@@ -71,7 +79,6 @@ public class Service {
         int differentY = defaultHeadPosition.getyPos() - defaultTailPosition.getyPos();
 
         if (Math.abs(differentX) < 2 && Math.abs(differentY) < 2) {
-            tailPositions.add( new Position(defaultTailPosition.getxPos(), defaultTailPosition.getyPos()));
             return;
         }
         if (differentX == 0) {
@@ -96,6 +103,5 @@ public class Service {
                 defaultTailPosition.moveY(differentY/2);
             }
         }
-        tailPositions.add( new Position(defaultTailPosition.getxPos(), defaultTailPosition.getyPos()));
     }
 }
