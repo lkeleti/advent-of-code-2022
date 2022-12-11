@@ -64,9 +64,11 @@ public class Service {
                     break;
             }
             for (int j = 0; j < snake.size()-1; j++) {
-                defaultHeadPosition = snake.get(j);
-                defaultTailPosition = snake.get(j+1);
+                defaultHeadPosition = new Position(snake.get(j).getxPos(), snake.get(j).getyPos());
+                defaultTailPosition = new Position(snake.get(j+1).getxPos(), snake.get(j+1).getyPos());
                 moveTail();
+                snake.get(j+1).setxPos(defaultTailPosition.getxPos());
+                snake.get(j+1).setyPos(defaultTailPosition.getyPos());
                 if (j+1 == snake.size()-1) {
                     tailPositions.add(new Position(defaultTailPosition.getxPos(), defaultTailPosition.getyPos()));
                 }
