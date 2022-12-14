@@ -1,8 +1,8 @@
 package dev.lkeleti;
 
 public class Position {
-    private final int posX;
-    private final int posY;
+    private int posX;
+    private int posY;
 
     public Position(int posX, int posY) {
         this.posX = posX;
@@ -15,6 +15,14 @@ public class Position {
 
     public int getPosY() {
         return posY;
+    }
+
+    public void setPosX(int posX) {
+        this.posX = posX;
+    }
+
+    public void setPosY(int posY) {
+        this.posY = posY;
     }
 
     @Override

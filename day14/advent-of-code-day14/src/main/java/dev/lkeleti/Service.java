@@ -15,6 +15,8 @@ public class Service {
     private int maxX;
     private int maxY;
 
+    private long sands;
+
     private final List<List<Character>> board = new ArrayList<>();
     public void readInput(Path path) {
         try (BufferedReader br = Files.newBufferedReader(path)) {
@@ -25,10 +27,25 @@ public class Service {
         } catch (IOException ioe) {
             throw new IllegalStateException("Cannot read file: " + path);
         }
-
-        findMinMaxCords();
     }
 
+    public long solve(String part) {
+        sands = 0;
+        board.clear();
+        findMinMaxCords();
+        if (part.equals("p2")) {
+            lines.add(
+                    new Line(
+                            new Position(0, maxY + 2),
+                            new Position(maxX*2, maxY + 2)
+                    )
+            );
+        }
+        drawLines();
+        simulate(part);
+        drawBoard();
+        return sands;
+    }
     private void findMinMaxCords() {
         minX = lines.stream().mapToInt(l->l.getStartPos().getPosX()).min().getAsInt();
         maxX = lines.stream().mapToInt(l->l.getStartPos().getPosX()).max().getAsInt();
@@ -44,15 +61,13 @@ public class Service {
         maxY = Math.max(maxY, tmp);
 
         List<Character> air = new ArrayList<>();
-        for (int y = 0;  y <= maxY; y++) {
+        for (int y = 0;  y <= maxY + 2; y++) {
             air.add('.');
         }
 
-        for (int x = 0; x <= maxX; x++) {
+        for (int x = 0; x <= maxX * 2; x++) {
             board.add(new ArrayList<>(air));
         }
-        drawLines();
-        drawBoard();
     }
 
     private void readLinesFromLine(String line) {
@@ -91,7 +106,6 @@ public class Service {
     }
 
     private void drawBoard() {
-        board.get(500).set(0, 'O');
         for (int y = 0; y <= maxY; y++) {
             for (int x = minX; x <= maxX; x++) {
                 System.out.print(board.get(x).get(y));
@@ -100,4 +114,57 @@ public class Service {
         }
     }
 
+    private void simulate(String part) {
+        boolean end = false;
+        int falseCounter = 0;
+        while (!end) {
+            boolean canMove = true;
+            Position defPos = new Position(500, 0);
+            while (canMove) {
+                if ((part.equals("p1") && (defPos.getPosY() + 1 > maxY ||
+                        defPos.getPosX() - 1 < 0 ||
+                        defPos.getPosX() + 1 > maxX)) ||
+                        (part.equals("p2") && board.get(500).get(0) == 'O')
+                ) {
+                    end = true;
+                    sands -= 1;
+                    break;
+                }
+
+                char downPosValue = board.get(defPos.getPosX()).get(defPos.getPosY() + 1);
+                char leftPosValue = board.get(defPos.getPosX() - 1).get(defPos.getPosY() + 1);
+                char rightPosValue = board.get(defPos.getPosX() + 1).get(defPos.getPosY() + 1);
+
+                if (downPosValue == '.') {
+                    board.get(defPos.getPosX()).set(defPos.getPosY(), '.');
+                    defPos.setPosY(defPos.getPosY() + 1);
+                    board.get(defPos.getPosX()).set(defPos.getPosY(), 'O');
+                    falseCounter = 0;
+                } else {
+                    if (leftPosValue == '.') {
+                        board.get(defPos.getPosX()).set(defPos.getPosY(), '.');
+                        defPos.setPosX(defPos.getPosX() - 1);
+                        defPos.setPosY(defPos.getPosY() + 1);
+                        board.get(defPos.getPosX()).set(defPos.getPosY(), 'O');
+                        falseCounter = 0;
+                    } else {
+                        if (rightPosValue == '.') {
+                            board.get(defPos.getPosX()).set(defPos.getPosY(), '.');
+                            defPos.setPosX(defPos.getPosX() + 1);
+                            defPos.setPosY(defPos.getPosY() + 1);
+                            board.get(defPos.getPosX()).set(defPos.getPosY(), 'O');
+                            falseCounter = 0;
+                        } else {
+                            canMove = false;
+                            falseCounter += 1;
+                        }
+                    }
+                }
+            }
+            if (falseCounter == 2) {
+                end = true;
+            }
+            sands += 1;
+        }
+    }
 }
