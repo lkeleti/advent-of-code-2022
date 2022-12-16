@@ -8,11 +8,12 @@ import java.util.*;
 
 public class Service {
 
-    private Map<Position, Character> matrix = new LinkedHashMap<>();
-    private List<Measure> measureList = new ArrayList<>();
+    private final Map<Position, Character> matrix = new LinkedHashMap<>();
+    private final Map<Long, List<BaconPos>> matrix2 = new LinkedHashMap<>();
+    private final List<Measure> measureList = new ArrayList<>();
 
-    private final long ROW = 2_000_000;
-    private final long CORD = 4_000_000;
+    private static final long ROW = 2_000_000;
+    private static final long CORD = 4_000_000;
     public void readInput(Path path) {
         try (BufferedReader br = Files.newBufferedReader(path)) {
             String line;
@@ -75,26 +76,49 @@ public class Service {
             long bacX = measure.getBeaconPos().getPosX();
             long bacY = measure.getBeaconPos().getPosY();
             if ( senY >= 0 && senY <= CORD && senX >= 0 && senX <= CORD) {
-                matrix.put(measure.getSensorPos(),'S');
+                BaconPos baconPos = new BaconPos(measure.getSensorPos().getPosX(), measure.getSensorPos().getPosX());
+                if (!matrix2.containsKey(senY)) {
+                    matrix2.put(senY, new ArrayList<>());
+                }
+                matrix2.get(senY).add(baconPos);
             }
+
             if ( bacY >= 0 && bacY <= CORD && bacX >= 0 && bacX <= CORD) {
-                matrix.put(measure.getBeaconPos(),'B');
+                BaconPos baconPos = new BaconPos(measure.getBeaconPos().getPosX(), measure.getBeaconPos().getPosX());
+                if (!matrix2.containsKey(bacY)) {
+                    matrix2.put(bacY, new ArrayList<>());
+                }
+                matrix2.get(bacY).add(baconPos);
             }
+
             long distance = Math.abs(senX - measure.getBeaconPos().getPosX()) + Math.abs(senY - measure.getBeaconPos().getPosY());
             for (long j = senY - distance; j <= senY + distance; j++) {
                 long width = distance - Math.abs(j - senY);
-                for (long i = senX - width; i <= senX + width; i++) {
-                    matrix.computeIfAbsent(
-                            new Position(i, j), position -> '#'
-                    );
+                BaconPos baconPos = new BaconPos(senX - width, senX + width);
+                if (!matrix2.containsKey(j)) {
+                    matrix2.put(j, new ArrayList<>());
                 }
+                matrix2.get(j).add(baconPos);
+
             }
         }
-        long freq = 0;
+
         for (long i = 0; i <= CORD; i++) {
-            for (long j = 0; j <= CORD; j++) {
-                if (!matrix.containsKey(new Position(i, j))) {
-                    return (i * 4000000) + j;
+            List<BaconPos> defBaconPos = matrix2.get(i);
+            if (defBaconPos.isEmpty()) {
+                if (defBaconPos.get(0).getPosXTo() > 0 || defBaconPos.get(0).getPosXTo() < CORD) {
+                    System.out.println(defBaconPos.get(0));
+                    return 0;
+                }
+            }
+            else {
+                defBaconPos.sort(Comparator.comparingLong(BaconPos::getPosXFrom));
+                long to = 0;
+                for (int j = 0; j < defBaconPos.size(); j++){
+                    if (to < defBaconPos.get(j).getPosXFrom()) {
+                        return (to + 1) * 4000000 + i ;
+                    }
+                    to = Math.max(to, defBaconPos.get(j).getPosXTo());
                 }
             }
         }
