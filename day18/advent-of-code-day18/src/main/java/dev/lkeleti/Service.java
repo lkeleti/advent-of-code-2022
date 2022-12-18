@@ -63,13 +63,15 @@ public class Service {
     public long countWaterSides(int part) {
         determineBounds();
         fillWithWater();
+        System.out.println(waterPoints.size());
         return countFreeSides(part);
     }
 
     private void fillWithWater() {
         Queue<Point> q = new LinkedList<>();
-        waterPoints.add(bounds.getMinPoint());
-        q.add(bounds.getMinPoint());
+        Point from = bounds.getMinPoint();
+        waterPoints.add(from);
+        q.add(from);
 
         while (!q.isEmpty()) {
             Point water = q.poll();
