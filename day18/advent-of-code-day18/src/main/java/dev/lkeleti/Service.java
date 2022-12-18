@@ -66,27 +66,24 @@ public class Service {
         return countFreeSides(part);
     }
 
-    private void fillNeighbourWithWater(Point start, List<Point> visited) {
-        if (visited.contains(start) || lavaPoints.contains(start) || bounds.isOutOfBound(start)) {
-            return;
-        }
-        waterPoints.add(start);
-        visited.add(start);
-        List<Point> neighbours = getNeighbours(start);
-        for(Iterator<Point> p = neighbours.iterator(); p.hasNext();){
-            Point point = p.next();
-            if (visited.contains(point) || bounds.isOutOfBound(point)) {
-                p.remove();
+    private void fillWithWater() {
+        Queue<Point> q = new LinkedList<>();
+        waterPoints.add(bounds.getMinPoint());
+        q.add(bounds.getMinPoint());
+
+        while (!q.isEmpty()) {
+            Point water = q.poll();
+
+            for (Point neighbour: getNeighbours(water)) {
+                if (!waterPoints.contains(neighbour) &&
+                        !bounds.isOutOfBound(neighbour)  &&
+                        !lavaPoints.contains(neighbour)
+                ) {
+                    waterPoints.add(neighbour);
+                    q.add(neighbour);
+                }
             }
         }
-
-        for (Point neighbour: neighbours) {
-            fillNeighbourWithWater(neighbour, new ArrayList<>(visited));
-        }
-    }
-
-    private void fillWithWater() {
-        fillNeighbourWithWater(bounds.getMinPoint(), new ArrayList<>());
     }
 
     private void determineBounds() {
