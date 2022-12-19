@@ -10,7 +10,7 @@ public class Service {
 
     private final List<Point> lavaPoints = new ArrayList<>();
     private Bound bounds;
-    private final Set<Point> waterPoints = new TreeSet<>();
+    private final List<Point> waterPoints = new ArrayList<>();
     public void readInput(Path path) {
         try (BufferedReader br = Files.newBufferedReader(path)) {
             String line;
@@ -44,14 +44,20 @@ public class Service {
         long sum = 0;
         for (Point point: lavaPoints) {
             List<Point> neighbours = getNeighbours(point);
-            int side = 6;
+            int side;
+            if (part == 1) {
+                side = 6;
+            }
+            else {
+                side = 0;
+            }
             for (Point neighbour: neighbours) {
                 if (part == 1 && lavaPoints.contains(neighbour)) {
                     side -=1;
                 }
-                else {
-                    if (part == 2 && !waterPoints.contains(neighbour)) {
-                        side -= 1;
+                if (part == 2) {
+                    if (!lavaPoints.contains(neighbour) && (bounds.isOutOfBound(neighbour) || waterPoints.contains(neighbour))){
+                        side += 1;
                     }
                 }
             }
@@ -63,7 +69,6 @@ public class Service {
     public long countWaterSides(int part) {
         determineBounds();
         fillWithWater();
-        System.out.println(waterPoints.size());
         return countFreeSides(part);
     }
 

@@ -13,7 +13,8 @@ To approximate the surface area, count the number of sides of each cube that are
 Here's a larger example:
 
 <pre>
-<code>2,2,2
+<code>
+2,2,2
 1,2,2
 3,2,2
 2,1,2

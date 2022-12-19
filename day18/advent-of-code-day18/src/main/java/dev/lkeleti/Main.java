@@ -10,5 +10,6 @@ public class Main {
         System.out.println(service.countFreeSides(1));
         System.out.println("Answer of part 2:");
         System.out.println(service.countWaterSides(2));
+        //2583 low
     }
 }
