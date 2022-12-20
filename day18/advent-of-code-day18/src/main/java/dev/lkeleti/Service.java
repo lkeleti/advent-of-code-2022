@@ -96,14 +96,14 @@ public class Service {
     private void determineBounds() {
         bounds = new Bound(
                 new Point(
-                        lavaPoints.stream().mapToLong(Point::getPosX).min().getAsLong(),
-                        lavaPoints.stream().mapToLong(Point::getPosY).min().getAsLong(),
-                        lavaPoints.stream().mapToLong(Point::getPosZ).min().getAsLong()
+                        lavaPoints.stream().mapToLong(Point::getPosX).min().getAsLong()-1,
+                        lavaPoints.stream().mapToLong(Point::getPosY).min().getAsLong()-1,
+                        lavaPoints.stream().mapToLong(Point::getPosZ).min().getAsLong()-1
                 ),
                 new Point(
-                        lavaPoints.stream().mapToLong(Point::getPosX).max().getAsLong(),
-                        lavaPoints.stream().mapToLong(Point::getPosY).max().getAsLong(),
-                        lavaPoints.stream().mapToLong(Point::getPosZ).max().getAsLong()
+                        lavaPoints.stream().mapToLong(Point::getPosX).max().getAsLong()+1,
+                        lavaPoints.stream().mapToLong(Point::getPosY).max().getAsLong()+1,
+                        lavaPoints.stream().mapToLong(Point::getPosZ).max().getAsLong()+1
                 )
         );
     }
