@@ -115,8 +115,28 @@ public class Service {
 
     public long decodeTwo() {
         findNoValuesMonkey(2);
-        Monkey leftMonkey = monkeys.get("root").getMonkeyLeft();
-        Monkey rightMonkey = monkeys.get("root").getMonkeyRight();
-        return 0l;
+        monkeys.get("humn").setValue(null);
+        boolean change = true;
+        while(change) {
+            change = false;
+            for (Iterator<String> i = noValuesMonkey.iterator();i.hasNext();) {
+                String name = i.next();
+                Monkey monkey = monkeys.get(name);
+                Long leftValue = monkeys.get(monkey.getMonkeyLeft().getName()).getValue();
+                Long rightValue = monkeys.get(monkey.getMonkeyRight().getName()).getValue();
+                if (!(monkey.getMonkeyLeft().getName().equals("humn") || monkey.getMonkeyRight().getName().equals("humn"))) {
+                    if (leftValue != null &&
+                            rightValue != null
+                    ) {
+                        monkey.setValue(monkey.getOperation().execute(leftValue, rightValue));
+                        i.remove();
+                        change = true;
+                    }
+                }
+            }
+        }
+        System.out.println(monkeys.get("root").getMonkeyLeft().getValue());
+        System.out.println(monkeys.get("root").getMonkeyRight().getValue());
+        return 0L;
     }
 }
