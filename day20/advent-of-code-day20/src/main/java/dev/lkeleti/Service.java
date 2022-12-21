@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Service {
@@ -39,6 +40,7 @@ public class Service {
 
             encryptedData.add(nextPosition, number);
         }
+
 
         return encryptedData.get(1000 % (sizeOfNumbers -1 )) + encryptedData.get(2000 % (sizeOfNumbers -1 )) + encryptedData.get(3000 % (sizeOfNumbers -1 ));
     }
