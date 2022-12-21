@@ -13,6 +13,8 @@ public class Service {
     private Map<String,Monkey> monkeys = new TreeMap<>();
     private List<String> noValuesMonkey = new ArrayList<>();
     public void readInput(Path path) {
+        monkeys.clear();
+        noValuesMonkey.clear();
         try (BufferedReader br = Files.newBufferedReader(path)) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -26,6 +28,7 @@ public class Service {
     private void readMonkeyFromLine(String line) {
         String[] datas = line.split(": ");
         String name = datas[0];
+
         if (!datas[1].contains(" ")) {
             Monkey monkey;
             if (!monkeys.containsKey(name)) {
@@ -81,7 +84,7 @@ public class Service {
     }
 
     public long decode() {
-        findNoValuesMonkey();
+        findNoValuesMonkey(1);
         while(monkeys.get("root").getValue() == null) {
             for (Iterator<String> i = noValuesMonkey.iterator();i.hasNext();) {
                 String name = i.next();
@@ -99,11 +102,21 @@ public class Service {
         return monkeys.get("root").getValue();
     }
 
-    private void findNoValuesMonkey() {
+    private void findNoValuesMonkey(int part) {
         for (Monkey monkey: monkeys.values()) {
             if (monkey.getValue() == null) {
                 noValuesMonkey.add(monkey.getName());
             }
         }
+        if (part == 2) {
+            noValuesMonkey.remove("root");
+        }
+    }
+
+    public long decodeTwo() {
+        findNoValuesMonkey(2);
+        Monkey leftMonkey = monkeys.get("root").getMonkeyLeft();
+        Monkey rightMonkey = monkeys.get("root").getMonkeyRight();
+        return 0l;
     }
 }
