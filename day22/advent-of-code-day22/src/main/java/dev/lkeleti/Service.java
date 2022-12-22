@@ -95,10 +95,67 @@ public class Service {
                 } else if (command.equals("R")) {
                     turnRight(defDirection);
                 } else {
-                    //step ahead
+                    int steps = Integer.parseInt(command);
+                    for (int i = 0; i < steps; i++) {
+                        char defDir = defPos.getDirection();
+                        switch (defDir) {
+                            case 'L':
+                                moveLeft();
+                                break;
+                            case 'R':
+                                moveRight();
+                                break;
+                            case 'U':
+                                moveUp();
+                                break;
+                            default:
+                                moveDown();
+                                break;
+                        }
+                    }
                 }
             }
         }
+    }
+
+    private void moveDown() {
+        Position nextPos = new Position(defPos);
+        nextPos.decY();
+        if (table.get(nextPos.getPosX()).get(nextPos.getPosY()) == '.') {
+            defPos = nextPos;
+        }
+        else if (table.get(nextPos.getPosX()).get(nextPos.getPosY()) == ' ') {
+            for (int i = 0; i < defPos.getPosY(); i++) {
+                if (table.get(defPos.getPosX()).get(i) == '.') {
+                    defPos = new Position(defPos.getPosX(), i, defPos.getDirection());
+                    break;
+                }
+            }
+        }
+    }
+
+    private void moveUp() {
+        Position nextPos = new Position(defPos);
+        nextPos.incY();
+        if (table.get(nextPos.getPosX()).get(nextPos.getPosY()) == '.') {
+            defPos = nextPos;
+        }
+        else if (table.get(nextPos.getPosX()).get(nextPos.getPosY()) == ' ') {
+            for (int i = table.get(0).size(); i >= 0; i--) {
+                if (table.get(defPos.getPosX()).get(i) == '.') {
+                    defPos = new Position(defPos.getPosX(), i, defPos.getDirection());
+                    break;
+                }
+            }
+        }
+    }
+
+    private void moveRight() {
+        Position nextPos = new Position(defPos);
+    }
+
+    private void moveLeft() {
+        Position nextPos = new Position(defPos);
     }
 
     private void turnRight(char defDirection) {

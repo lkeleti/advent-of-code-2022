@@ -11,6 +11,12 @@ public class Position {
         this.direction = direction;
     }
 
+    public Position(Position position) {
+        posX = position.getPosX();
+        posY = position.getPosY();
+        direction = position.getDirection();
+    }
+
     public int getPosX() {
         return posX;
     }
@@ -33,5 +39,21 @@ public class Position {
 
     public void setDirection(char direction) {
         this.direction = direction;
+    }
+
+    public void incX() {
+        posX += 1;
+    }
+
+    public void incY() {
+        posY += 1;
+    }
+
+    public void decX() {
+        posX -= 1;
+    }
+
+    public void decY() {
+        posY -= 1;
     }
 }
