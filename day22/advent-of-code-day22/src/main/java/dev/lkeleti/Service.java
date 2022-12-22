@@ -42,6 +42,7 @@ public class Service {
                 command = "";
             }
         }
+        commands.add(command);
     }
 
     private void reCalcLength() {
