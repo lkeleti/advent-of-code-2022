@@ -56,4 +56,13 @@ public class Position {
     public void decY() {
         posY -= 1;
     }
+
+    @Override
+    public String toString() {
+        return "Position{" +
+                "posX=" + posX +
+                ", posY=" + posY +
+                ", direction=" + direction +
+                '}';
+    }
 }

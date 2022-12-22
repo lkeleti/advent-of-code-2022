@@ -15,10 +15,10 @@ public class Service {
     public void readInput(Path path) {
         try (BufferedReader br = Files.newBufferedReader(path)) {
             String line;
-            boolean table = true;
+            boolean tableB = true;
             while ((line = br.readLine()) != null) {
-                if (table) {
-                    table = readTableFromLine(line);
+                if (tableB) {
+                    tableB = readTableFromLine(line);
                 }
                 else {
                     getCommands(line.trim());
@@ -66,7 +66,7 @@ public class Service {
     private void findStart() {
         for (int i = 0; i < table.get(0).size(); i++) {
             if (table.get(0).get(i) != ' ') {
-                defPos = new Position(i, 0, 'L');
+                defPos = new Position(i, 0, 'R');
                 break;
             }
         }
@@ -86,7 +86,7 @@ public class Service {
         }
     }
 
-    private void simulate() {
+    public long simulate() {
         for (String command: commands) {
             if (command.equals("L") || command.equals("R")) {
                 char defDirection = defPos.getDirection();
@@ -94,68 +94,119 @@ public class Service {
                     turnLeft(defDirection);
                 } else if (command.equals("R")) {
                     turnRight(defDirection);
-                } else {
-                    int steps = Integer.parseInt(command);
-                    for (int i = 0; i < steps; i++) {
-                        char defDir = defPos.getDirection();
-                        switch (defDir) {
-                            case 'L':
-                                moveLeft();
-                                break;
-                            case 'R':
-                                moveRight();
-                                break;
-                            case 'U':
-                                moveUp();
-                                break;
-                            default:
-                                moveDown();
-                                break;
-                        }
+                }
+            } else {
+                int steps = Integer.parseInt(command);
+                for (int i = 0; i < steps; i++) {
+                    char defDir = defPos.getDirection();
+                    switch (defDir) {
+                        case 'L':
+                            moveLeft();
+                            break;
+                        case 'R':
+                            moveRight();
+                            break;
+                        case 'U':
+                            moveUp();
+                            break;
+                        default:
+                            moveDown();
+                            break;
                     }
                 }
             }
+        }
+        int facing;
+        switch (defPos.getDirection()) {
+            case 'R':
+                facing = 0;
+                break;
+            case 'D':
+                facing = 1;
+                break;
+
+            case 'L':
+                facing = 2;
+                break;
+            default:
+                facing = 3;
+                break;
+
+
+        }
+        return (defPos.getPosY()+1) * 1000 + (defPos.getPosX()+1) * 4 + facing;
+    }
+
+    private void moveUp() {
+        Position nextPos = new Position(defPos);
+        nextPos.decY();
+        if (nextPos.getPosY() < 0 || table.get(nextPos.getPosY()).get(nextPos.getPosX()) == ' ') {
+            for (int i = table.size()-1; i >= 0; i--) {
+                if (table.get(i).get(defPos.getPosX()) == '#') {
+                    break;
+                } else if (table.get(i).get(defPos.getPosX()) == '.') {
+                    defPos = new Position(defPos.getPosX(), i, defPos.getDirection());
+                    break;
+                }
+            }
+        }
+        else if (table.get(nextPos.getPosY()).get(nextPos.getPosX()) == '.') {
+            defPos = nextPos;
         }
     }
 
     private void moveDown() {
         Position nextPos = new Position(defPos);
-        nextPos.decY();
-        if (table.get(nextPos.getPosX()).get(nextPos.getPosY()) == '.') {
-            defPos = nextPos;
-        }
-        else if (table.get(nextPos.getPosX()).get(nextPos.getPosY()) == ' ') {
-            for (int i = 0; i < defPos.getPosY(); i++) {
-                if (table.get(defPos.getPosX()).get(i) == '.') {
-                    defPos = new Position(defPos.getPosX(), i, defPos.getDirection());
-                    break;
-                }
-            }
-        }
-    }
-
-    private void moveUp() {
-        Position nextPos = new Position(defPos);
         nextPos.incY();
-        if (table.get(nextPos.getPosX()).get(nextPos.getPosY()) == '.') {
-            defPos = nextPos;
-        }
-        else if (table.get(nextPos.getPosX()).get(nextPos.getPosY()) == ' ') {
-            for (int i = table.get(0).size(); i >= 0; i--) {
-                if (table.get(defPos.getPosX()).get(i) == '.') {
+        if (nextPos.getPosY() >= table.size() || table.get(nextPos.getPosY()).get(nextPos.getPosX()) == ' ') {
+            for (int i = 0; i <  table.size(); i++) {
+                if (table.get(i).get(defPos.getPosX()) == '#') {
+                    break;
+                } else if (table.get(i).get(defPos.getPosX()) == '.') {
                     defPos = new Position(defPos.getPosX(), i, defPos.getDirection());
                     break;
                 }
             }
+        }
+        else if (table.get(nextPos.getPosY()).get(nextPos.getPosX()) == '.') {
+            defPos = nextPos;
         }
     }
 
     private void moveRight() {
         Position nextPos = new Position(defPos);
+        nextPos.incX();
+        if (nextPos.getPosX() >= table.get(0).size() || table.get(nextPos.getPosY()).get(nextPos.getPosX()) == ' ') {
+            for (int i = 0; i < table.get(0).size(); i++) {
+                if (table.get(defPos.getPosY()).get(i) == '#') {
+                    break;
+                } else if (table.get(defPos.getPosY()).get(i) == '.') {
+                    defPos = new Position(i, defPos.getPosY(), defPos.getDirection());
+                    break;
+                }
+            }
+        }
+        else if (table.get(nextPos.getPosY()).get(nextPos.getPosX()) == '.') {
+            defPos = nextPos;
+        }
     }
 
     private void moveLeft() {
         Position nextPos = new Position(defPos);
+        nextPos.decX();
+        if (nextPos.getPosX() < 0 || table.get(nextPos.getPosY()).get(nextPos.getPosX()) == ' ') {
+            for (int i = table.get(0).size()-1; i >= 0; i--) {
+                if (table.get(defPos.getPosY()).get(i) == '#') {
+                    break;
+                } else if (table.get(defPos.getPosY()).get(i) == '.') {
+                    defPos = new Position(i, defPos.getPosY(), defPos.getDirection());
+                    break;
+                }
+            }
+        }
+        else if (table.get(nextPos.getPosY()).get(nextPos.getPosX()) == '.') {
+            defPos = nextPos;
+        }
     }
 
     private void turnRight(char defDirection) {
