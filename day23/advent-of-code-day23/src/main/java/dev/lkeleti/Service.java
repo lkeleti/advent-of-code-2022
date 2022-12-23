@@ -39,24 +39,164 @@ private Map<Direction,Direction> directionMap = new HashMap<>();
     }
 
     public long simulate() {
-        plan();
-        checkSamePositions();
-        move();
-        return 0L;
+        int minX = elves.stream().mapToInt(e->e.getDefaultPos().getPosX()).min().getAsInt();
+        int maxX = elves.stream().mapToInt(e->e.getDefaultPos().getPosX()).max().getAsInt();
+        int minY = elves.stream().mapToInt(e->e.getDefaultPos().getPosY()).min().getAsInt();
+        int maxY = elves.stream().mapToInt(e->e.getDefaultPos().getPosY()).max().getAsInt();
+        drawElves(minX, maxX, minY, maxY);
+        for (int i = 0; i < 10; i++) {
+            plan();
+            checkSamePositions();
+            move();
+            minX = elves.stream().mapToInt(e->e.getDefaultPos().getPosX()).min().getAsInt();
+            maxX = elves.stream().mapToInt(e->e.getDefaultPos().getPosX()).max().getAsInt();
+            minY = elves.stream().mapToInt(e->e.getDefaultPos().getPosY()).min().getAsInt();
+            maxY = elves.stream().mapToInt(e->e.getDefaultPos().getPosY()).max().getAsInt();
+            drawElves(minX, maxX, minY, maxY);
+        }
+        minX = elves.stream().mapToInt(e->e.getDefaultPos().getPosX()).min().getAsInt();
+        maxX = elves.stream().mapToInt(e->e.getDefaultPos().getPosX()).max().getAsInt();
+        minY = elves.stream().mapToInt(e->e.getDefaultPos().getPosY()).min().getAsInt();
+        maxY = elves.stream().mapToInt(e->e.getDefaultPos().getPosY()).max().getAsInt();
+        drawElves(minX, maxX, minY, maxY);
+        return ((maxX-minX+1) * (maxY-minY+1)) ;
+    }
+
+    private void drawElves(int minX, int maxX, int minY, int maxY) {
+        for (int i = minY; i <= maxY; i++) {
+            List<Character> row = new ArrayList<>();
+            for (int j = minX; j <= maxX; j++) {
+                char c;
+                Position checkPosition = new Position(j,i);
+                if (elves.stream().anyMatch(e -> e.getDefaultPos().equals(checkPosition))){
+                    c = '#';
+                }
+                else {
+                    c = '.';
+                }
+                row.add(c);
+            }
+            System.out.println(row);
+        }
+        System.out.println("--------------------------------------------------");
     }
 
     private void plan() {
         for (Elf elf : elves) {
             Direction defDirection = elf.getDirection();
             switch(defDirection) {
-                case E: checkEast();
+                case E: checkEast(elf,0);
                 break;
-                case N: checkEast();
+                case N: checkNorth(elf,0);
                 break;
-                case S: checkEast();
+                case S: checkSouth(elf,0);
                 break;
-                case W: checkEast();
+                case W: checkWest(elf,0);
                 break;
+            }
+        }
+    }
+
+    private void checkNorth(Elf elf, int counter) {
+        int posX = elf.getDefaultPos().getPosX();
+        int posY = elf.getDefaultPos().getPosY();
+        int northPosX = posX + Direction.N.getMask().getPosX();
+        int northPosY = posY + Direction.N.getMask().getPosY();
+        int northEastPosX = posX + Direction.NE.getMask().getPosX();
+        int northEastPosY = posY + Direction.NE.getMask().getPosY();
+        int northWestPosX = posX + Direction.NW.getMask().getPosX();
+        int northWestPosY = posY + Direction.NW.getMask().getPosY();
+
+        if (elves.stream().noneMatch(e -> e.getDefaultPos().equals(new Position(northPosX, northPosY)) ||
+                e.getDefaultPos().equals(new Position(northEastPosX, northEastPosY)) ||
+                e.getDefaultPos().equals(new Position(northWestPosX, northWestPosY)))) {
+            elf.setPlannedPos(new Position(northPosX, northPosY));
+            elf.setDirection(Direction.S);
+        }
+        else {
+            if (counter < 4) {
+                checkSouth(elf, counter+1);
+            }
+            else {
+                elf.setPlannedPos(null);
+            }
+        }
+    }
+
+    private void checkSouth(Elf elf, int counter) {
+        int posX = elf.getDefaultPos().getPosX();
+        int posY = elf.getDefaultPos().getPosY();
+        int southPosX = posX + Direction.S.getMask().getPosX();
+        int southPosY = posY + Direction.S.getMask().getPosY();
+        int southEastPosX = posX + Direction.SE.getMask().getPosX();
+        int southEastPosY = posY + Direction.SE.getMask().getPosY();
+        int southWestPosX = posX + Direction.SW.getMask().getPosX();
+        int southWestPosY = posY + Direction.SW.getMask().getPosY();
+
+        if (elves.stream().noneMatch(e -> e.getDefaultPos().equals(new Position(southPosX, southPosY)) ||
+                e.getDefaultPos().equals(new Position(southEastPosX, southEastPosY)) ||
+                e.getDefaultPos().equals(new Position(southWestPosX, southWestPosY)))) {
+            elf.setPlannedPos(new Position(southPosX, southPosY));
+            elf.setDirection(Direction.W);
+        }
+        else {
+            if (counter < 4) {
+                checkWest(elf, counter+1);
+            }
+            else {
+                elf.setPlannedPos(null);
+            }
+        }
+    }
+
+    private void checkWest(Elf elf, int counter) {
+        int posX = elf.getDefaultPos().getPosX();
+        int posY = elf.getDefaultPos().getPosY();
+        int westPosX = posX + Direction.W.getMask().getPosX();
+        int westPosY = posY + Direction.W.getMask().getPosY();
+        int northWestPosX = posX + Direction.NW.getMask().getPosX();
+        int northWestPosY = posY + Direction.NW.getMask().getPosY();
+        int southWestPosX = posX + Direction.SW.getMask().getPosX();
+        int southWestPosY = posY + Direction.SW.getMask().getPosY();
+
+        if (elves.stream().noneMatch(e -> e.getDefaultPos().equals(new Position(westPosX, westPosY)) ||
+                e.getDefaultPos().equals(new Position(northWestPosX, northWestPosY)) ||
+                e.getDefaultPos().equals(new Position(southWestPosX, southWestPosY)))) {
+            elf.setPlannedPos(new Position(westPosX, westPosY));
+            elf.setDirection(Direction.E);
+        }
+        else {
+            if (counter < 4) {
+                checkEast(elf, counter+1);
+            }
+            else {
+                elf.setPlannedPos(null);
+            }
+        }
+    }
+
+    private void checkEast(Elf elf, int counter) {
+        int posX = elf.getDefaultPos().getPosX();
+        int posY = elf.getDefaultPos().getPosY();
+        int eastPosX = posX + Direction.E.getMask().getPosX();
+        int eastPosY = posY + Direction.E.getMask().getPosY();
+        int northEastPosX = posX + Direction.NE.getMask().getPosX();
+        int northEastPosY = posY + Direction.NE.getMask().getPosY();
+        int southEastPosX = posX + Direction.SE.getMask().getPosX();
+        int southEastPosY = posY + Direction.SE.getMask().getPosY();
+
+        if (elves.stream().noneMatch(e -> e.getDefaultPos().equals(new Position(eastPosX, eastPosY)) ||
+                e.getDefaultPos().equals(new Position(northEastPosX, northEastPosY)) ||
+                e.getDefaultPos().equals(new Position(southEastPosX, southEastPosY)))) {
+            elf.setPlannedPos(new Position(eastPosX, eastPosY));
+            elf.setDirection(Direction.N);
+        }
+        else {
+            if (counter < 4) {
+                checkNorth(elf, counter+1);
+            }
+            else {
+                elf.setPlannedPos(null);
             }
         }
     }
@@ -64,7 +204,14 @@ private Map<Direction,Direction> directionMap = new HashMap<>();
     private void checkSamePositions() {
         for (Iterator<Elf> e = elves.iterator(); e.hasNext();) {
             Elf elf = e.next();
-            elves.stream().filter(es->es.getPlannedPos().equals(elf.getPlannedPos())).forEach(t -> t.setPlannedPos(null));
+            if (elf.getPlannedPos() != null) {
+                List<Elf> samePosElf = elves.stream().filter(es -> es.getPlannedPos() != null && es.getPlannedPos().equals(elf.getPlannedPos())).toList();
+                if (samePosElf.size() > 1) {
+                    for (Elf spe: samePosElf) {
+                        spe.setPlannedPos(null);
+                    }
+                }
+            }
         }
     }
 
