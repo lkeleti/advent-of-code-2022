@@ -7,9 +7,8 @@ public class Main {
         Service service = new Service();
         service.readInput(Path.of("src/main/resources/input.txt"));
         System.out.println("Answer of part 1:");
-        System.out.println(service.simulate());
+        System.out.println(service.simulate(1));
         System.out.println("Answer of part 2:");
-        //5815 high
-        //3903 low
+        System.out.println(service.simulate(2));
     }
 }
