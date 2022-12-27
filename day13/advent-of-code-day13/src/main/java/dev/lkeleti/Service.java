@@ -1,19 +1,13 @@
 package dev.lkeleti;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class Service {
 
@@ -44,6 +38,7 @@ public class Service {
         long count = 0;
         JsonNode jnOne;
         JsonNode jnTwo;
+        long counter = 0;
         for (Equation equation: equations) {
             try {
                 jnOne = mapper.readTree(equation.getPart1());
@@ -52,25 +47,30 @@ public class Service {
             catch (IOException  e) {
                 throw new IllegalArgumentException("Something went wrong!", e);
             }
-            count += compareEquation(jnOne, jnTwo) ? 1:0;
+            counter++;
+            count += compareEquation(jnOne, jnTwo) ? counter:0;
         }
         return count;
     }
 
     private boolean compareEquation(JsonNode part1, JsonNode part2) {
+        if (part1 != null && part2 == null) {
+            return true;
+        }
+
         if (part1.isInt() && part2.isInt()) {
-            return part1.asInt() > part2.asInt();
+            return part1.asInt() <= part2.asInt();
         }
         else {
             if (part1.isArray() && part2.isArray()) {
                 ArrayNode p1 = (ArrayNode) part1;
                 ArrayNode p2 = (ArrayNode) part2;
-                if (p1.size() < p2.size()) {
-                    return true;
-                } else {
-                    //elements by elements
-                    return false;
+                for (int i = 0; i < Math.min(p1.size(), p2.size()); i++) {
+                    if (!compareEquation(p1.get(i), p2.get(i))) {
+                        return false;
+                    }
                 }
+                return true;
             }
             else if (part1.isArray() && part2.isInt()) {
                 ObjectMapper mapper = new ObjectMapper();
@@ -88,7 +88,7 @@ public class Service {
                 } catch (IOException e) {
                     throw new IllegalArgumentException("Something went wrong!", e);
                 }
-                compareEquation(part1, part2);
+                return compareEquation(part1, part2);
             }
         }
         return false;
