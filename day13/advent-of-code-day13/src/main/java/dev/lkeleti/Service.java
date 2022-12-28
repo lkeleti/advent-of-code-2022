@@ -48,29 +48,36 @@ public class Service {
                 throw new IllegalArgumentException("Something went wrong!", e);
             }
             counter++;
-            count += compareEquation(jnOne, jnTwo) ? counter:0;
+            count += compareEquation(jnOne, jnTwo) < 0 ? counter:0;
         }
         return count;
     }
 
-    private boolean compareEquation(JsonNode part1, JsonNode part2) {
+    private int compareEquation(JsonNode part1, JsonNode part2) {
         if (part1 != null && part2 == null) {
-            return true;
+            return -1;
         }
 
         if (part1.isInt() && part2.isInt()) {
-            return part1.asInt() <= part2.asInt();
+            return part1.asInt() - part2.asInt();
         }
         else {
             if (part1.isArray() && part2.isArray()) {
                 ArrayNode p1 = (ArrayNode) part1;
                 ArrayNode p2 = (ArrayNode) part2;
+                int res = -1;
                 for (int i = 0; i < Math.min(p1.size(), p2.size()); i++) {
-                    if (!compareEquation(p1.get(i), p2.get(i))) {
-                        return false;
+                    res = compareEquation(p1.get(i), p2.get(i));
+                    if (res > 0) {
+                        return 1;
                     }
                 }
-                return true;
+                if (res == 0) {
+                    return p1.size() - p2.size();
+                }
+                else {
+                    return -1;
+                }
             }
             else if (part1.isArray() && part2.isInt()) {
                 ObjectMapper mapper = new ObjectMapper();
@@ -91,6 +98,6 @@ public class Service {
                 return compareEquation(part1, part2);
             }
         }
-        return false;
+        return 1;
     }
 }
