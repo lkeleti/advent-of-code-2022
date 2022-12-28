@@ -9,5 +9,6 @@ public class Main {
         System.out.println("Answer of part 1:");
         System.out.println(service.countEquations());
         System.out.println("Answer of part 2:");
+        //9868 high
     }
 }

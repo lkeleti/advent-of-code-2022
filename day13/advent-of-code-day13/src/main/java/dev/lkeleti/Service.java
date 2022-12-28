@@ -53,7 +53,7 @@ public class Service {
         return count;
     }
 
-    private int compareEquation(JsonNode part1, JsonNode part2) {
+   private int compareEquation(JsonNode part1, JsonNode part2) {
         if (part1 != null && part2 == null) {
             return -1;
         }
@@ -66,16 +66,22 @@ public class Service {
                 ArrayNode p1 = (ArrayNode) part1;
                 ArrayNode p2 = (ArrayNode) part2;
                 int res = -1;
-                int p1Size = 0;
-                int p2Size = 0;
+                int p1Size = p1.size();
+                int p2Size = p2.size();
                 for (int i = 0; i < Math.min(p1.size(), p2.size()); i++) {
                     res = compareEquation(p1.get(i), p2.get(i));
                     if (res < 0) {
                         return -1;
                     }
-                    p1Size = p1.get(i).size();
-                    p2Size = p1.get(i).size();
                 }
+
+                if (p1Size == 0 && p2Size > 0) {
+                    return -1;
+                }
+                else if(p2Size == 0 && p1Size > 0) {
+                    return 1;
+                }
+
                 if (res == 0) {
                     return p1Size - p2Size;
                 }
