@@ -66,17 +66,21 @@ public class Service {
                 ArrayNode p1 = (ArrayNode) part1;
                 ArrayNode p2 = (ArrayNode) part2;
                 int res = -1;
+                int p1Size = 0;
+                int p2Size = 0;
                 for (int i = 0; i < Math.min(p1.size(), p2.size()); i++) {
                     res = compareEquation(p1.get(i), p2.get(i));
-                    if (res > 0) {
-                        return 1;
+                    if (res < 0) {
+                        return -1;
                     }
+                    p1Size = p1.get(i).size();
+                    p2Size = p1.get(i).size();
                 }
                 if (res == 0) {
-                    return p1.size() - p2.size();
+                    return p1Size - p2Size;
                 }
                 else {
-                    return -1;
+                    return 1;
                 }
             }
             else if (part1.isArray() && part2.isInt()) {
