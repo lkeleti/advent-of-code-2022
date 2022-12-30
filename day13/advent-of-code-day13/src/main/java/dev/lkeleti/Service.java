@@ -34,6 +34,7 @@ public class Service {
     }
 
     public long countEquations(){
+        List<Long> indecies = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         long count = 0;
         JsonNode jnOne;
@@ -48,8 +49,12 @@ public class Service {
                 throw new IllegalArgumentException("Something went wrong!", e);
             }
             counter++;
-            count += compareEquation(jnOne, jnTwo) < 0 ? counter:0;
+            if (compareEquation(jnOne, jnTwo) < 0) {
+                count += counter;
+                indecies.add(counter);
+            }
         }
+        System.out.println(indecies);
         return count;
     }
 
@@ -72,6 +77,9 @@ public class Service {
                     res = compareEquation(p1.get(i), p2.get(i));
                     if (res < 0) {
                         return -1;
+                    }
+                    if (res > 0) {
+                        return 1;
                     }
                 }
 
