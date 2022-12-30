@@ -1,5 +1,6 @@
 package dev.lkeleti;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -12,6 +13,7 @@ import java.util.*;
 public class Service {
 
     private final List<Equation> equations = new ArrayList<>();
+    private final List<String> equationList = new ArrayList<>();
 
     public void readInput(Path path) {
         try (BufferedReader br = Files.newBufferedReader(path)) {
@@ -25,6 +27,8 @@ public class Service {
                     equations.add(
                             new Equation(part1, line.trim())
                     );
+                    equationList.add(part1);
+                    equationList.add(line.trim());
                     part1 = "";
                 }
             }
@@ -33,12 +37,15 @@ public class Service {
         }
     }
 
-    public long countEquations(){
+    public long countEquations(int part){
         ObjectMapper mapper = new ObjectMapper();
         long count = 0;
         JsonNode jnOne;
         JsonNode jnTwo;
         long counter = 0;
+        int indTwo = 0;
+        int indSix = 0;
+
         for (Equation equation: equations) {
             try {
                 jnOne = mapper.readTree(equation.getPart1());
@@ -49,11 +56,45 @@ public class Service {
             }
             counter++;
 
-            if (compareEquation(jnOne, jnTwo) < 0) {
+            if (part == 1 &&compareEquation(jnOne, jnTwo) < 0) {
                 count += counter;
             }
+
+            if (part ==2) {
+                equationList.sort(
+                        (o1, o2) -> {
+                            try {
+                                return compareEquation(
+                                        mapper.readTree(o1),
+                                        mapper.readTree(o2)
+                                );
+                            } catch (JsonProcessingException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                );
+                for (int i = 0; i < equationList.size(); i++) {
+                    try {
+
+                        if (compareEquation(mapper.readTree("[[2]]"), mapper.readTree(equationList.get(i))) > 0) {
+                            indTwo = i+2;
+                        }
+                        if (compareEquation(mapper.readTree("[[6]]"), mapper.readTree(equationList.get(i))) > 0) {
+                            indSix = i+3;
+                        }
+                    }
+                    catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
         }
-        return count;
+        if (part == 1) {
+            return count;
+        }
+        else {
+            return indTwo * indSix;
+        }
     }
 
    private int compareEquation(JsonNode part1, JsonNode part2) {

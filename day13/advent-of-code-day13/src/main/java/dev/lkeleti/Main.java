@@ -7,9 +7,9 @@ public class Main {
         Service service = new Service();
         service.readInput(Path.of("src/main/resources/input.txt"));
         System.out.println("Answer of part 1:");
-        System.out.println(service.countEquations());
+        System.out.println(service.countEquations(1));
         System.out.println("Answer of part 2:");
-        //9868 high
-        //6215 low
+        System.out.println(service.countEquations(2));
+        //1126 low
     }
 }
