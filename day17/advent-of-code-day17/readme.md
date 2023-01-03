@@ -7,7 +7,8 @@ The tunnels eventually open into a very tall, narrow chamber. Large, oddly-shape
 The five types of rocks have the following peculiar shapes, where <code>#</code> is rock and <code>.</code> is empty space:
 
 <pre>
-<code>####
+<code>
+####
 
 .#.
 ###
