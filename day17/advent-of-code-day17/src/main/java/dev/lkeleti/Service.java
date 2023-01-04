@@ -32,7 +32,7 @@ public class Service {
             Rock defaultRock = new Rock(maxHeight);
             boolean canMove = true;
             while (canMove) {
-                if (!defaultRock.canMoveSide(jetPattern[pushCounter])) {
+                if (defaultRock.canMoveSide(jetPattern[pushCounter])) {
                     defaultRock.moveSide(jetPattern[pushCounter]);
                 }
                 boolean isCollide = false;
@@ -66,6 +66,7 @@ public class Service {
                 }
                 else {
                     if (defaultRock.getPosY() == 0) {
+                        defaultRock.setPosY(1);
                         canMove = false;
                     }
                 }
