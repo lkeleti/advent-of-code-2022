@@ -59,6 +59,18 @@ public class Service {
                     for (Rock otherRock : rocks) {
                         if (defaultRock.isCollide(otherRock)) {
                             defaultRock.setPosY(defaultRock.getPosY() + 1);
+                            if ( jetPattern[pushCounter] == '>') {
+                                defaultRock.moveSide('<');
+                            }
+                            else {
+                                defaultRock.moveSide('>');
+                            }
+                            if (pushCounter == 0) {
+                                pushCounter = jetPattern.length-1;
+                            }
+                            else {
+                                pushCounter--;
+                            }
                             canMove = false;
                             break;
                         }
