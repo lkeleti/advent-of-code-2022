@@ -27,25 +27,14 @@ public class Service {
         int pushCounter = 0;
         int maxHeight = 0;
 
+        rocks.add(new Rock(0));
         while (counter > 0 ) {
-            maxHeight = rocks.stream().mapToInt(r->r.getPosY()+r.getHeight()).max().orElse(0) + 4;
+            maxHeight = rocks.stream().mapToInt(r->r.getPosY()+r.getHeight()).max().orElse(0) + 3;
             Rock defaultRock = new Rock(maxHeight);
             boolean canMove = true;
             while (canMove) {
-                if (defaultRock.canMoveSide(jetPattern[pushCounter])) {
+                if (defaultRock.canMoveSide(jetPattern[pushCounter]) && !checkCollideSide(defaultRock, jetPattern[pushCounter])) {
                     defaultRock.moveSide(jetPattern[pushCounter]);
-                }
-                boolean isCollide = false;
-                for(Rock otherRock : rocks) {
-                    if (defaultRock.isCollide(otherRock)) {
-                        if ( jetPattern[pushCounter] == '>') {
-                            defaultRock.moveSide('<');
-                        }
-                        else {
-                            defaultRock.moveSide('>');
-                        }
-                    }
-                    break;
                 }
 
                 if (pushCounter == jetPattern.length - 1) {
@@ -54,38 +43,49 @@ public class Service {
                     pushCounter++;
                 }
 
-                defaultRock.setPosY(defaultRock.getPosY() - 1);
-                if (!rocks.isEmpty()) {
-                    for (Rock otherRock : rocks) {
-                        if (defaultRock.isCollide(otherRock)) {
-                            defaultRock.setPosY(defaultRock.getPosY() + 1);
-                            if ( jetPattern[pushCounter] == '>') {
-                                defaultRock.moveSide('<');
-                            }
-                            else {
-                                defaultRock.moveSide('>');
-                            }
-                            if (pushCounter == 0) {
-                                pushCounter = jetPattern.length-1;
-                            }
-                            else {
-                                pushCounter--;
-                            }
-                            canMove = false;
-                            break;
+                if (!checkCollideDown(defaultRock)) {
+                    defaultRock.setPosY(defaultRock.getPosY() - 1);
+                } else {
+                    canMove = false;
+                }
+
+                Rock testRock = new Rock(defaultRock);
+                if (canMove && checkCollideDown(testRock)) {
+                    canMove = false;
+                    if (testRock.canMoveSide(jetPattern[pushCounter]) && !checkCollideSide(testRock, jetPattern[pushCounter])) {
+                        testRock.moveSide(jetPattern[pushCounter]);
+                        if (!checkCollideDown(testRock)) {
+                            canMove = true;
                         }
                     }
                 }
-                else {
-                    if (defaultRock.getPosY() == 0) {
-                        defaultRock.setPosY(1);
-                        canMove = false;
-                    }
-                }
             }
+
             counter--;
             rocks.add(defaultRock);
         }
         return rocks.stream().mapToInt(r->r.getPosY()+r.getHeight()).max().getAsInt();
+    }
+
+    private boolean checkCollideSide(Rock defaultRock, char direction) {
+        Rock testRock = new Rock(defaultRock);
+        testRock.moveSide(direction);
+        for(Rock otherRock : rocks) {
+            if (testRock.isCollide(otherRock)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkCollideDown(Rock defaultRock) {
+        Rock testRock = new Rock(defaultRock);
+        testRock.setPosY(testRock.getPosY()-1);
+        for(Rock otherRock : rocks) {
+            if (testRock.isCollide(otherRock)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

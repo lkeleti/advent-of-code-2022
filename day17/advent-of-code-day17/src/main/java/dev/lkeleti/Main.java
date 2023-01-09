@@ -10,5 +10,7 @@ public class Main {
         System.out.println(service.simulate());
         System.out.println("Answer of part 2:");
         //4448 high
+        //3032
+        //3179 good?
     }
 }

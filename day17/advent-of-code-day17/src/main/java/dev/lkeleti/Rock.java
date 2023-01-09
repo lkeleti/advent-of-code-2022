@@ -1,7 +1,7 @@
 package dev.lkeleti;
 
 public class Rock {
-    private static int nextShape = 0;
+    private static int nextShape = -1;
     private String[] shape;
     private int posY;
     private final int height;
@@ -10,6 +10,12 @@ public class Rock {
         this.posY = posY;
         shape = generate();
         height = shape.length;
+    }
+
+    public Rock(Rock rock) {
+        this.posY = rock.getPosY();
+        shape = rock.getShape();
+        height = rock.getShape().length-1;
     }
 
     public String[] getShape() {
@@ -36,8 +42,8 @@ public class Rock {
             break;
             case 1:
                 shape =  new String[]{"   #   ",
-                                    "  ###  ",
-                                    "   #   "};
+                                      "  ###  ",
+                                      "   #   "};
             break;
             case 2:
                 shape =  new String[]{"  ###  ",
@@ -50,9 +56,12 @@ public class Rock {
                                       "  #    ",
                                       "  #    "};
             break;
-            default:
+            case 4:
                 shape =  new String[]{"  ##   ",
-                                      "  ##   "};
+                        "  ##   "};
+                break;
+            default:
+                shape =  new String[]{"#######"};
             break;
         }
         if (nextShape == 4) {
@@ -74,14 +83,14 @@ public class Rock {
             return false;
         }
 
-        int minY = Math.min(posY, otherRock.getPosY());
-        int maxY = Math.max(posY+height, otherRock.getPosY()+ otherRock.getHeight());
+        int minY = Math.max(posY, otherRock.getPosY());
+        int maxY = Math.min(posY+height, otherRock.getPosY()+ otherRock.getHeight());
 
-        for (int i = minY; i < maxY; i++) {
-            if (posY >= i && posY <= i) {
+        for (int i = minY; i <= maxY; i++) {
+            if (posY >= i && i <= posY+height) {
                 int otherIndex = i - otherRock.getPosY() ;
                 if (otherIndex >= 0 && otherIndex < otherRock.getHeight()) {
-                    String thisRow = shape[i -posY];
+                    String thisRow = shape[posY-i];
                     String otherRow = otherRock.getShape()[i -otherRock.getPosY()];
 
                     for ( int j = 0; j < 7; j++) {
