@@ -48,17 +48,6 @@ public class Service {
                 } else {
                     canMove = false;
                 }
-
-                Rock testRock = new Rock(defaultRock);
-                if (canMove && checkCollideDown(testRock)) {
-                    canMove = false;
-                    if (testRock.canMoveSide(jetPattern[pushCounter]) && !checkCollideSide(testRock, jetPattern[pushCounter])) {
-                        testRock.moveSide(jetPattern[pushCounter]);
-                        if (!checkCollideDown(testRock)) {
-                            canMove = true;
-                        }
-                    }
-                }
             }
 
             counter--;

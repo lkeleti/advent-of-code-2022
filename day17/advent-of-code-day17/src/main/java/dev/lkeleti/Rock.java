@@ -91,7 +91,7 @@ public class Rock {
                 int otherIndex = i - otherRock.getPosY() ;
                 if (otherIndex >= 0 && otherIndex < otherRock.getHeight()) {
                     String thisRow = shape[posY-i];
-                    String otherRow = otherRock.getShape()[i -otherRock.getPosY()];
+                    String otherRow = otherRock.getShape()[i-otherRock.getPosY()];
 
                     for ( int j = 0; j < 7; j++) {
                         if (thisRow.charAt(j) == '#' && otherRow.charAt(j) == '#') {
